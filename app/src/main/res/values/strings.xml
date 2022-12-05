@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">RepositoryLab</string>
+    <string name="search_box_hint">Username</string>
+    <string name="user_not_found">User not found</string>
+    <string name="search_button_text">Search</string>
+</resources>
