@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity(), MyAdapter.OnListInteractionListener, O
         this.mUsername = username
         mAdapter?.clear()
         mProgressBar!!.visibility = View.VISIBLE
-        // TODO - Set username to repository
+        mRepository?.doFetchRepos(mUsername)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +54,14 @@ class MainActivity : AppCompatActivity(), MyAdapter.OnListInteractionListener, O
         val searchButton = findViewById<Button>(R.id.searchButton)
         mProgressBar = findViewById(R.id.progressBar)
 
-        // TODO - Get instance of Repository and observe repos
+        mRepository = RepoRepository.getInstance(
+            RepoDatabase.getInstance(this)!!.repoDao()!!,
+            RepoNetworkDataSource.instance!!
+        )
+        val reposObserver = Observer<List<Repo>> {
+            onReposLoaded(it)
+        }
+        mRepository?.currentRepos!!.observe(this, reposObserver)
 
         searchButton.setOnClickListener { view: View? ->
             loadUserRepos(searchBox.text.toString())

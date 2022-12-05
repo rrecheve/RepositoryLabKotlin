@@ -13,9 +13,8 @@ interface RepoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun bulkInsert(repo: List<Repo?>?)
 
-    // TODO - Migrate List<Repo> to LiveData<List<Repo>>
     @Query("SELECT * FROM repo WHERE owner = :owner")
-    fun getReposByOwner(owner: String?): List<Repo>
+    fun getReposByOwner(owner: String?): LiveData<List<Repo>>
 
     @Query("SELECT count(*) FROM repo WHERE owner = :owner")
     fun getNumberReposByUser(owner: String?): Int

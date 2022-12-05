@@ -61,8 +61,7 @@ class RepoRepository private constructor(
      * Database related operations
      */
     val currentRepos: LiveData<List<Repo>> by lazy {
-        // TODO - Return LiveData from Room. Use Transformation to get owner
-        MutableLiveData<List<Repo>> ()
+        mRepoDao.getReposByOwner("rrecheve");
     }
     /**
      * Checks if we have to update the repos data.
