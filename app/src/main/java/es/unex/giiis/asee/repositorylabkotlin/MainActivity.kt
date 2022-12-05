@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity(), MyAdapter.OnListInteractionListener, O
         this.mUsername = username
         mAdapter?.clear()
         mProgressBar!!.visibility = View.VISIBLE
-        mRepository?.doFetchRepos(mUsername)
+        mRepository?.setUsername(mUsername)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

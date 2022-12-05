@@ -3,6 +3,7 @@ package es.unex.giiis.asee.repositorylabkotlin.data
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import es.unex.giiis.asee.repositorylabkotlin.AppExecutors
 import es.unex.giiis.asee.repositorylabkotlin.data.model.Repo
 import es.unex.giiis.asee.repositorylabkotlin.data.network.RepoNetworkDataSource
@@ -40,7 +41,7 @@ class RepoRepository private constructor(
     }
 
     fun setUsername(username: String) {
-        // TODO - Set value to MutableLiveData in order to filter getCurrentRepos LiveData
+        userFilterLiveData.value = username
         AppExecutors.instance?.diskIO()?.execute {
             if (isFetchNeeded(username)) {
                 doFetchRepos(username)
@@ -60,9 +61,10 @@ class RepoRepository private constructor(
     /**
      * Database related operations
      */
-    val currentRepos: LiveData<List<Repo>> by lazy {
-        mRepoDao.getReposByOwner("rrecheve");
-    }
+    val currentRepos: LiveData<List<Repo>>  =
+          Transformations.switchMap(userFilterLiveData){
+            mRepoDao.getReposByOwner(it)}
+
     /**
      * Checks if we have to update the repos data.
      * @return Whether a fetch is needed
@@ -71,8 +73,7 @@ class RepoRepository private constructor(
         var lastFetchTimeMillis = lastUpdateTimeMillisMap[username]
         lastFetchTimeMillis = lastFetchTimeMillis ?: 0L
         val timeFromLastFetch = System.currentTimeMillis() - lastFetchTimeMillis
-        // TODO - Implement cache policy: When time has passed or no repos in cache
-        return true
+        return timeFromLastFetch > MIN_TIME_FROM_LAST_FETCH_MILLIS || mRepoDao.getNumberReposByUser(username) == 0
     }
 
     companion object {
