@@ -68,6 +68,10 @@ class MainActivity : AppCompatActivity(), MyAdapter.OnListInteractionListener, O
         }
 
         //TODO - Force Repository to fetch repos from network
+        mSwipeRefreshLayout?.setOnRefreshListener {
+            mRepository?.doFetchRepos(mUsername);
+            mSwipeRefreshLayout?.setRefreshing(false);
+        }
     }
 
     override fun onListInteraction(url: String?) {
